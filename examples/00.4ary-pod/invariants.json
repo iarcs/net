@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Reach 1",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": ".* s4p3"
+  },
+  {
+    "name": "Segment 1",
+    "type": "segmentation",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "switch": "s4",
+    "port": 4
+  },
+  {
+    "name": "Waypoint 1",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": ".* s1 .*"
+  },
+  {
+    "name": "Waypoint 2",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": ".* s4 .*"
+  },
+  {
+    "name": "Origin 1",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": "s3p4 .*"
+  },
+  {
+    "name": "Loop",
+    "type": "loop",
+    "packet_set": {}
+  },
+  {
+    "name": "Regex 1",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": "s3p4 s3p1 s1p2 s4p3"
+  },
+  {
+    "name": "Regex 2",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": "leaf spine leaf out"
+  },
+  {
+    "name": "Black hole",
+    "type": "regex",
+    "packet_set": {
+      "src_ip": ["10.0.1.0", "10.0.1.255"],
+      "dst_ip": ["10.0.2.0", "10.0.2.255"]
+    },
+    "pattern": "..* out"
+  }
+]

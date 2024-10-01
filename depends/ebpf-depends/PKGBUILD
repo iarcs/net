@@ -1,0 +1,14 @@
+pkgname=ebpf-depends
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Meta package for eBPF dependencies'
+arch=('x86_64')
+url="https://github.com/p4lang/p4c/blob/main/backends/ebpf/"
+license=('Apache')
+depends=('libbpf' 'clang' 'llvm' 'libpcap' 'libelf' 'iproute2' 'net-tools'
+         'python-pyroute2' 'python-ply' 'python-scapy')
+makedepends=()
+source=()
+sha256sums=()
+
+# vim: set ts=4 sw=4 et :

@@ -1,0 +1,16 @@
+pkgname=allie-dev
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="Development environment for allie"
+arch=('any')
+url="https://github.com/kyechou/allie"
+license=()
+depends=('p4c' 'mininet' 'ptf' 'python-graphviz' 'python-pypacker' 'yapf'
+         'boost' 'pcapplusplus')
+makedepends=()
+checkdepends=()
+optdepends=()
+source=()
+sha256sums=()
+
+# vim: set sw=4 ts=4 et:

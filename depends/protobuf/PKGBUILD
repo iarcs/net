@@ -1,0 +1,54 @@
+pkgname=protobuf
+pkgver=3.18.1
+pkgrel=1
+pkgdesc="Protocol Buffers - Google's data interchange format"
+arch=('x86_64')
+url='https://developers.google.com/protocol-buffers/'
+license=('BSD')
+depends=('zlib' 'python' 'python-six')
+makedepends=('git' 'python-setuptools')
+provides=('protobuf' 'python-protobuf')
+conflicts=('protobuf' 'python-protobuf')
+options=('staticlibs')
+source=("https://github.com/protocolbuffers/protobuf/releases/download/v${pkgver}/protobuf-all-${pkgver}.tar.gz")
+sha256sums=('b8ab9bbdf0c6968cf20060794bc61e231fae82aaf69d6e3577c154181991f576')
+
+prepare() {
+    cd "$srcdir/$pkgname-$pkgver"
+    autoreconf -vfi
+    sed -e "/DeprecationWarning/d" -i python/google/protobuf/internal/*test.py
+}
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    ./configure --prefix=/usr
+    make
+
+    # Python
+    cd "$srcdir/$pkgname-$pkgver/python"
+    python setup.py build --cpp_implementation
+}
+
+check() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make check
+
+    cd "$srcdir/$pkgname-$pkgver/python"
+    python setup.py test
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make DESTDIR="$pkgdir" install
+    install -Dm 644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname"
+
+    # Python
+    cd "$srcdir/$pkgname-$pkgver/python"
+    python setup.py install --prefix=/usr \
+        --cpp_implementation \
+        --root="$pkgdir" \
+        --optimize=1 \
+        --skip-build
+}
+
+# vim: set ts=4 sw=4 et :

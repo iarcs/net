@@ -1,0 +1,23 @@
+pkgname=python-nnpy
+pkgver=1.4.2
+pkgrel=1
+pkgdesc='nanomsg bindings for Python'
+arch=('x86_64')
+url='https://pypi.org/project/nnpy/'
+license=('MIT')
+depends=('nanomsg' 'python-cffi')
+makedepends=('python-setuptools')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/nanomsg/nnpy/archive/$pkgver.tar.gz")
+sha256sums=('fcfc4115429cae1872a51abe94bb01e2de6d851c5ce82d415d85f0e60a128549')
+
+build() {
+    cd "$srcdir/nnpy-$pkgver"
+    python setup.py build
+}
+
+package() {
+    cd "$srcdir/nnpy-$pkgver"
+    python setup.py install --root="$pkgdir" --optimize=1
+}
+
+# vim: set ts=4 sw=4 et:

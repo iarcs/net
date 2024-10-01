@@ -1,0 +1,45 @@
+pkgname=bmv2
+pkgver=1.15.0
+pkgrel=1
+pkgdesc='The reference P4 software switch'
+arch=('x86_64')
+url="https://github.com/p4lang/behavioral-model"
+license=('Apache')
+depends=('gmp' 'libpcap' 'boost' 'libevent' 'openssl' 'thrift=0.11.0'
+         'nanomsg' 'pi')
+makedepends=('cmake')
+checkdepends=('python-six')
+source=("https://github.com/p4lang/behavioral-model/archive/refs/tags/${pkgver}.tar.gz")
+sha256sums=('6690ee1dc1b8fcd4bfdb1b2a95b5c7950aed689dbaa7f279913e004666594299')
+
+build() {
+    cd "$srcdir/behavioral-model-$pkgver"
+    ./autogen.sh
+    ./configure --prefix=/usr \
+        --with-nanomsg \
+        --with-thrift \
+        --with-pi
+    make
+
+    cd "$srcdir/behavioral-model-$pkgver/targets/simple_switch_grpc"
+    ./autogen.sh
+    ./configure --prefix=/usr \
+        --without-sysrepo \
+        --with-thrift
+    make
+}
+
+# check() {
+#    cd "$srcdir/behavioral-model-$pkgver"
+#    make check
+# }
+
+package() {
+    cd "$srcdir/behavioral-model-$pkgver"
+    make DESTDIR="${pkgdir}" install
+
+    cd "$srcdir/behavioral-model-$pkgver/targets/simple_switch_grpc"
+    make DESTDIR="${pkgdir}" install
+}
+
+# vim: set ts=4 sw=4 et :

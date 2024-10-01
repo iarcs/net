@@ -1,0 +1,14 @@
+.vscode/
+__pycache__/
+build/
+logs/
+pcaps/
+figures/
+output/
+network.json
+*.pyc
+*.dot
+*.png
+*.csv
+*.pdf
+*.code-workspace

@@ -1,0 +1,55 @@
+pkgname=thrift
+pkgver=0.11.0
+pkgrel=1
+pkgdesc='Scalable cross-language services framework for IPC/RPC'
+arch=(x86_64)
+url='http://thrift.apache.org/'
+license=(Apache)
+depends=(openssl qt5-base)
+makedepends=(boost libevent python-setuptools)
+optdepends=(
+    'qt5-base: TQTcpServer support'
+)
+source=("https://github.com/apache/thrift/archive/refs/tags/$pkgver.tar.gz")
+sha256sums=('0e324569321a1b626381baabbb98000c8dd3a59697292dbcc71e67135af0fefd')
+
+build() {
+    cd "$srcdir/thrift-$pkgver"
+    ./bootstrap.sh
+    ./configure --prefix=/usr \
+                --enable-plugin \
+                --with-cpp \
+                --with-c_glib \
+                --with-qt5 \
+                --with-libevent \
+                --with-csharp \
+                --without-haskell \
+                --without-php \
+                --without-ruby \
+                --without-python \
+                --without-erlang \
+                --without-perl \
+                --without-java \
+                --without-c_sharp \
+                --without-d \
+                --without-php \
+                --without-go \
+                --without-lua \
+                --without-nodejs
+    make
+
+    # Python
+    cd "$srcdir/thrift-$pkgver/lib/py"
+    python setup.py build
+}
+
+package() {
+    cd "$srcdir/thrift-$pkgver"
+    make DESTDIR="$pkgdir" install
+
+    # Python
+    cd "$srcdir/thrift-$pkgver/lib/py"
+    python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 --skip-build
+}
+
+# vim: set ts=4 sw=4 et :

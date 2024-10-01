@@ -1,0 +1,32 @@
+pkgname=ptf
+pkgver=r183.7494366
+pkgrel=1
+pkgdesc='Packet test framework'
+arch=('x86_64')
+url="https://github.com/p4lang/ptf"
+license=('Apache')
+depends=('python' 'python-six' 'python-scapy' 'python-pypcap' 'tcpdump')
+makedepends=('git' 'python-setuptools')
+source=("$pkgname"::'git+https://github.com/p4lang/ptf#commit=7494366607e2e4c171439df3585eba3c9769fad8')
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    if git describe --long --tags >/dev/null 2>&1; then
+        git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+    else
+        printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git describe --always)"
+    fi
+}
+
+build() {
+    cd "$srcdir/$pkgname"
+    python setup.py build
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+    python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 --skip-build
+}
+
+# vim: set ts=4 sw=4 et :

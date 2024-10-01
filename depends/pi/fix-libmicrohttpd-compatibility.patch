@@ -1,0 +1,23 @@
+diff --git a/proto/demo_grpc/web_server.cpp b/proto/demo_grpc/web_server.cpp
+index 5a86767..5eb0768 100644
+--- a/proto/demo_grpc/web_server.cpp
++++ b/proto/demo_grpc/web_server.cpp
+@@ -196,7 +196,7 @@ int answer_to_connection(void *cls, struct MHD_Connection *connection,
+     con_info->web_server = server;
+     if (!strncmp (method, "POST", sizeof "POST")) {
+       con_info->postprocessor = MHD_create_post_processor(
+-          connection, POSTBUFFERSIZE, iterate_post,
++          connection, POSTBUFFERSIZE, (MHD_PostDataIterator)iterate_post,
+           static_cast<void *>(con_info));
+       if (!con_info->postprocessor) {
+         delete con_info;
+@@ -237,7 +237,8 @@ WebServer::~WebServer() {
+ int
+ WebServer::start() {
+   daemon = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION, port, NULL, NULL,
+-                            &answer_to_connection, static_cast<void *>(this),
++                            (MHD_AccessHandlerCallback)&answer_to_connection,
++                            static_cast<void *>(this),
+                             MHD_OPTION_NOTIFY_COMPLETED, request_completed,
+                             NULL, MHD_OPTION_END);
+   return (daemon != NULL);

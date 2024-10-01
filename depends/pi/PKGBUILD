@@ -1,0 +1,55 @@
+pkgname=pi
+pkgver=0.1.0.r2.g21592d6
+pkgrel=1
+pkgdesc='Implementation framework for a P4Runtime server'
+arch=('x86_64')
+url="https://github.com/p4lang/PI"
+license=('Apache')
+depends=('protobuf=3.18.1' 'grpc=1.43.2' 'boost' 'libmicrohttpd')
+makedepends=('git')
+checkdepends=('valgrind')
+source=("$pkgname"::'git+https://github.com/p4lang/PI#commit=21592d61b314ba0c44a7409a733dbf9e46da6556'
+        'fix-libmicrohttpd-compatibility.patch')
+sha256sums=('SKIP'
+            '3fb75c8ee3b038ba2f1cff98b8518fd13571b6a13a9726e8bdacfacfa6991d37')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    if git describe --long --tags >/dev/null 2>&1; then
+        git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+    else
+        printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git describe --always)"
+    fi
+}
+
+prepare() {
+    cd "$srcdir/$pkgname"
+    git submodule update --init --recursive
+    find . -type f -exec sed -i 's/-isystem/-I/g' {} +
+    patch -Np1 -i "$srcdir/fix-libmicrohttpd-compatibility.patch"
+}
+
+build() {
+    cd "$srcdir/$pkgname"
+    ./autogen.sh
+    ./configure --prefix=/usr \
+        --with-proto \
+        --without-bmv2 \
+        --without-fe-cpp \
+        --without-internal-rpc \
+        --without-cli \
+        --without-sysrepo
+    make
+}
+
+check() {
+    cd "$srcdir/$pkgname"
+    make check
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+    make DESTDIR="${pkgdir}" install
+}
+
+# vim: set ts=4 sw=4 et :

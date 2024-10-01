@@ -1,0 +1,59 @@
+pkgname=p4c
+pkgver=1.2.3.6.r18.gdc7001377
+pkgrel=1
+pkgdesc='P4_16 reference compiler'
+arch=('x86_64')
+url="https://github.com/p4lang/p4c"
+license=('Apache')
+depends=('bmv2' 'ebpf-depends' 'gc' 'boost' 'python' 'protobuf' 'python-scapy'
+         'python-ply' 'z3')
+makedepends=('git' 'cmake>=3.0.2')
+optdepends=('graphviz')
+source=("$pkgname::git+https://github.com/p4lang/p4c#commit=dc7001377210d2b435dccc73ae76b74c00059f0c")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/$pkgname"
+    if git describe --long --tags >/dev/null 2>&1; then
+        git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+    else
+        printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git describe --always)"
+    fi
+}
+
+prepare() {
+    cd "$srcdir/$pkgname"
+    git submodule update --init --recursive
+}
+
+build() {
+    mkdir -p "$srcdir/$pkgname/build"
+    cd "$srcdir/$pkgname/build"
+    cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DENABLE_BMV2=ON \
+        -DENABLE_EBPF=ON \
+        -DENABLE_UBPF=ON \
+        -DENABLE_DPDK=ON \
+        -DENABLE_P4C_GRAPHS=ON \
+        -DENABLE_P4TEST=ON \
+        -DENABLE_TEST_TOOLS=ON \
+        -DENABLE_GC=ON \
+        -DENABLE_GTESTS=ON \
+        -DENABLE_PROTOBUF_STATIC=ON \
+        -DENABLE_MULTITHREAD=ON
+    make
+}
+
+#check() {
+#    cd "$srcdir/$pkgname/build"
+#    make check
+#}
+
+package() {
+    cd "$srcdir/$pkgname/build"
+    make DESTDIR="${pkgdir}" install
+}
+
+# vim: set ts=4 sw=4 et :
